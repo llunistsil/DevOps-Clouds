@@ -1,0 +1,53 @@
+name: Bad CI/CD - What Could Go Wrong?
+
+# Плохая практика #1: Триггер на всё подряд
+on: [push, pull_request, workflow_dispatch, schedule]
+
+jobs:
+  # Плохая практика #2: Всё в одной джобе
+  do-everything:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Плохая практика #3: Хардкод секретов
+      - name: Setup
+        run: |
+          echo "DATABASE_URL=postgresql://admin:password123@prod-db.example.com/maindb" >> $GITHUB_ENV
+          echo "API_KEY=sk-1234567890abcdef" >> $GITHUB_ENV
+          export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+          export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+      # Плохая практика #4: Нет версионирования для actions
+      - uses: actions/setup-python@latest
+
+      # Плохая практика #5: Установка зависимостей без кеширования
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest flake8 black
+
+      # Плохая практика #6: Тесты? Не, не слышали
+      - name: "Tests"
+        run: echo "Tests passed! 🎉"
+
+      # Плохая практика #7: Сборка без тегов
+      - name: Build Docker image
+        run: docker build -t myapp .
+
+      # Плохая практика #8: Push в latest
+      - name: Push to registry
+        run: |
+          docker tag myapp myregistry/myapp:latest
+          docker push myregistry/myapp:latest
+
+      # Плохая практика #9: Деплой прямо в продакшн
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: |
+          ssh root@prod-server.com "docker pull myregistry/myapp:latest && docker restart myapp"
+
+      # Плохая практика #10: Нет уведомлений об ошибках
+      - name: Celebrate
+        run: echo "Deployed! What could possibly go wrong?"
