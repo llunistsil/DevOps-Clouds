@@ -1,40 +1,8 @@
 # DevOps Лаба 2: от плохих практик к хорошим
----
 
-## 🐳 Обычная часть: Dockerfile
+## Обычная часть: Dockerfile
 
-Создал два Dockerfile — плохой и хороший. В плохом намеренно завёл как минимум три антипаттерна, а в хорошем их исправил. Вот как выглядели оба:
-
-### Плохой Dockerfile
-
-```dockerfile
-FROM python:latest
-
-WORKDIR /app
-
-COPY ../model_api/ .
-
-RUN pip install -r requirements.txt
-
-CMD ["python", "main.py"]
-```
-
-### Хороший Dockerfile
-
-```dockerfile
-FROM python:3.11-bookworm
-
-WORKDIR /app
-
-RUN --mount=type=bind,source=../model_api/requirements.txt,target=/tmp/requirements.txt \
-    pip install --requirement /tmp/requirements.txt
-
-COPY ../model_api/ .
-
-CMD ["python", "main.py"]
-```
-
----
+Создал два Dockerfile — плохой и хороший. В плохом намеренно завёл как минимум три антипаттерна, а в хорошем их исправил.
 
 ## Плохие практики в плохом Dockerfile
 
@@ -92,43 +60,7 @@ CMD ["python", "main.py"]
 
 ## Сложная часть: Docker Compose
 
-Создал два compose-файла — плохой и хороший. В плохом завёл как минимум три антипаттерна, а в хорошем их исправил. Вот как они выглядят:
-
-### Плохой docker-compose.yml
-
-```yaml
-version: '3'
-
-services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    environment:
-      - SECRET_KEY=mysecretpassword123
-```
-
-### Хороший docker-compose.yml
-
-```yaml
-version: '3.8'
-
-services:
-  web:
-    build: .
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    secrets:
-      - secret_key
-
-secrets:
-  secret_key:
-    file: secrets/secret_key.txt
-```
-
----
+Также создал два compose-файла — плохой и хороший. В плохом завёл как минимум три антипаттерна, а в хорошем их исправил
 
 ## Плохие практики в плохом docker-compose.yml
 
