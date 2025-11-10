@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: good/Dockerfile
+    # Хорошая практика 1: Использование env_file
+    env_file:
+      - .env
+    # Хорошая практика 2: Использование secrets
+    secrets:
+      - db_password
+    environment:
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+    # Хорошая практика 3: Ограничение ресурсов
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # Хорошая практика 4: Использование именованных сетей
+    networks:
+      - frontend
+    ports:
+      - "5000:5000"
+    # Хорошая практика 5: Добавление healthcheck
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Хорошая практика 6: Добавление restart policy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2-alpine
+    # Хорошая практика 7: Использование volumes для персистентности
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    # Не открываем порты наружу без необходимости
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+# Изолированные сети
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+# Именованные volumes
+volumes:
+  redis_data:
+
+# Secrets
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt

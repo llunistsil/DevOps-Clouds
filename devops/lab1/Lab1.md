@@ -22,7 +22,7 @@ sudo apt install nginx -y
 
 После установки можно сразу проверить, работает ли сервер:
 ввожу в браузере IP и вижу заветную страницу **"Welcome to Nginx"** — значит, всё живо.
-![img.png](img.png)
+![img.png](public/img.png)
 
 ---
 
@@ -167,11 +167,11 @@ sudo systemctl reload nginx
 
 Теперь при заходе на `http://alpha.local:8081` меня сразу кидает на `https://alpha.local:8443`.
 
-![img_1.png](img_1.png)
+![img_1.png](public/img_1.png)
 
 Если на на `http://beta.local:8082` меня сразу кидает на `https://beta.local:8444`.
 
-![img_3.png](img_3.png)
+![img_3.png](public/img_3.png)
 ---
 
 ## Добавляем alias
@@ -197,7 +197,7 @@ location /docs/ {
 
 Перезагружаю Nginx и открываю `https://alpha.local/docs/longfile.html` — работает!:)
 
-![img_2.png](img_2.png)
+![img_2.png](public/img_2.png)
 
 ---
 

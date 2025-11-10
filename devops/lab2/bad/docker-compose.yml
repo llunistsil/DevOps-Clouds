@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: bad/Dockerfile
+    # Плохая практика 1: Хардкод секретов
+    environment:
+      - DATABASE_PASSWORD=admin123
+      - API_KEY=secret_key_12345
+      - DEBUG=True
+    # Плохая практика 2: Использование привилегированного режима без необходимости
+    privileged: true
+    # Плохая практика 3: Отсутствие ограничений ресурсов
+    ports:
+      - "5000:5000"
+    # Плохая практика 4: Отсутствие healthcheck
+
+  redis:
+    image: redis:latest
+    # Плохая практика 5: Отсутствие персистентности данных
+    ports:
+      - "6379:6379"
+    # Плохая практика 6: Открытие портов наружу без необходимости
